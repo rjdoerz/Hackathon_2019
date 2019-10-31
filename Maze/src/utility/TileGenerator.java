@@ -91,12 +91,10 @@ public class TileGenerator {
 		Tile thisTile = startTile;
 		System.out.println("isRow : " + isRow);
 		
-		
 		int min = 1;
 		int max;
 		// Minus 2 because Starting and Ending columns/rows should not be included in sets.
 		int bracket = ((tiles.length - 2) / numOfPoints);
-		System.out.println("1");
 		for(int i = 0; i < numOfPoints; i++) {
 			max = (bracket * (i+1));
 			if(max == tiles.length)
@@ -107,25 +105,25 @@ public class TileGenerator {
 			if(isRow) {
 					pointA = (random.nextInt(max - min + 1)) + min;	
 					pointB = (random.nextInt(tiles.length));
-					System.out.println("2");
 			} else {
 					pointB = (random.nextInt(max - min + 1)) + min;	
 					pointA = (random.nextInt(tiles.length));
-					System.out.println("3");
 			}
 			
 			if(tiles[pointB][pointA].getButton().getText().matches("[S][E]")) {
-				System.out.println("4");
+				i--;
+				continue;
+			} else if (tiles[pointB][pointA].getCoordinate().compareCoordinate(thisTile.getCoordinate(), 2)) {
+				System.out.println(1);
 				i--;
 				continue;
 			}
-			System.out.println("5");
 			min = max + 1;
 			
 			thisTile = tiles[pointB][pointA];
 			thisTile.setWaypoint();
 			System.out.print("P" + (i+1) + " ");
-			Printer.printCoord(thisTile);
+			Printer.print(thisTile);
 			thisTile.getButton().setText("P" + (i+1));
 			thisTile.getButton().setStyle("-fx-font-weight: bold;");
 		}
@@ -148,38 +146,63 @@ public class TileGenerator {
 
 
 	public void connectWaypoints(int numOfPoints) {
-		Tile[] wpTiles = getWaypoints(numOfPoints);
-		
-			for(Tile t : wpTiles) {
-				System.out.println(t.getCoordinate().toString());
+		Tile[] wpTiles = getWaypoints(numOfPoints);	// List of all waypoints
+			
+			// Print waypoints to console
+			for(int i = 0; i < wpTiles.length; i++) {
+				System.out.println("WP " + i + ": " + wpTiles[i].getCoordinate().toString());
 			}
 		
-		Tile thisTile = startTile;
+		Tile thisTile = startTile;	
+		// Step counter
 		int c = 1;
-		
-		for(int i = 0; i < wpTiles.length;) {
-			Tile wpTile = wpTiles[i];
-			
-			if(thisTile.getCoordinate().getColumn() == wpTile.getCoordinate().getColumn()) {
-				thisTile = byRow(thisTile, wpTile, c);
-			} else if (thisTile.getCoordinate().getRow() == wpTile.getCoordinate().getRow()) {
-				thisTile = byColumn(thisTile, wpTile, c);
+//		System.out.println(1);
+		for(int i = 0; i <= wpTiles.length;) {
+			Tile wpTile = null;
+			// wpTile = next WP
+			if(i == wpTiles.length) {
+				wpTile = endTile;
 			} else {
-				if(random.nextBoolean()) { // If true: move col. If col matches waypoint, move row.
+				wpTile = wpTiles[i];
+			}
+//			System.out.println(2);
+			
+			// if thisTile.column = wpTile.column (Column values are equal)
+			if(thisTile.getCoordinate().getColumn() == wpTile.getCoordinate().getColumn()) {
+				// Move up/down by row
+				thisTile = byRow(thisTile, wpTile, c);
+//				System.out.println(3);
+				
+			// else if thisTile.row = wpTile.row (row values are equal)
+			} else if (thisTile.getCoordinate().getRow() == wpTile.getCoordinate().getRow()) {
+				// Move left/right by column
+				thisTile = byColumn(thisTile, wpTile, c);
+//				System.out.println(4);
+				
+			// else pick a random direction
+			} else {
+				if(random.nextBoolean()) { // If true: move row. If false: move col
 					thisTile = byRow(thisTile, wpTile, c);
+//					System.out.println(5);
 				} else {
 					thisTile = byColumn(thisTile, wpTile, c);
+//					System.out.println(6);
 				}
 			}
 			
+//			System.out.println(7);
 			if(thisTile.isWaypoint()) {
 				System.out.println("Waypoint " + wpTiles[i].getButton().getText());
 				i++;
+//				System.out.println(8);
 			}
-			if(thisTile.getButton().getText().isEmpty())
+			if(thisTile.getButton().getText().isEmpty()) {
+//				System.out.println(9);
 				thisTile.getButton().setText(String.valueOf(c++));
-			else if(thisTile.getButton().getText().contains("E"))
+			}else if(thisTile.getButton().getText().contains("E")) {
+//				System.out.println(10);
 				break;
+			}
 		}
 	}
 
@@ -205,12 +228,15 @@ public class TileGenerator {
 		int thisRow = thisTile.getCoordinate().getRow();
 		int wpRow = wpTile.getCoordinate().getRow();
 		
+		// If this row is less than the wpRow (higher up)
 		if(thisRow < wpRow) {
+			// Check the tile below
 			if(checkDown(thisTile)) {
 				System.out.println(c + " Row +");
 				return nextRow(thisTile);
 			}
 		} else if (thisRow > wpRow) {
+			// Check tile above
 			if(checkUp(thisTile)) {
 				System.out.println(c + " Row -");
 				return lastRow(thisTile);

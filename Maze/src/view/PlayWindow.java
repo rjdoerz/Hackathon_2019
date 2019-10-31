@@ -52,15 +52,17 @@ public class PlayWindow {
 	private void drawTiles() {
 		for (int column = 0; column < size; column++) {
 			for (int row = 0; row < size; row++) {
+				int row1 = row;
+				int col1 = column;
 				tiles[column][row] = new Tile(new Coordinate(row, column));
 				Button b = tiles[column][row].getButton();
-				b.setText(row + ", " + column);
-				b.setStyle("-fx-font-size: 10px;");
+//				b.setText(row + ", " + column);
+//				b.setStyle("-fx-font-size: 10px;");
 				b.setMinSize(50, 50);
 				grid.add(b, row, column);
 				
 				b.setOnAction(e ->{
-					
+					System.out.println(row1 + ", " + col1);
 				});
 			}
 		}

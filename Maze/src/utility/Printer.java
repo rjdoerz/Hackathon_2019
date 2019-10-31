@@ -3,7 +3,7 @@ package utility;
 import model.Tile;
 import model.TileList;
 
-public class Printer {
+public abstract class Printer {
 	
 	public static void printList(TileList tileList) {
 		for(Tile e : tileList) {
@@ -13,6 +13,15 @@ public class Printer {
 	
 	public static void printCoord(Tile tile) {
 		System.out.println(tile.getCoordinate());
+	}
+	
+	public static <T> void print(T ...items) {
+		for(T item : items) {
+			if(item instanceof Tile) {
+				printCoord((Tile) item);
+			} else 
+			System.out.println(item);
+		}
 	}
 	
 }

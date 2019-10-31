@@ -29,6 +29,21 @@ public class Coordinate {
 		this.column = column;
 	}
 	
+	/*
+	 * Thie methid will check if another coordinate is within a specified distance of this coordinate.
+	 * False: coordinate is beyond the target distance
+	 * True: coordinate is within the target distance
+	 */
+	public boolean compareCoordinate(Coordinate compared, int distance) {
+		boolean inRange = false;
+		
+		if((Math.abs(compared.getRow() - this.row) <= distance) && (Math.abs(compared.getColumn() - this.column) <= distance)) {
+			inRange = true;
+		}
+		
+		return inRange;
+	}
+	
 
 	@Override
 	public String toString() {
