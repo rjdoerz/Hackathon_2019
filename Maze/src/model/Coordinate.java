@@ -47,7 +47,7 @@ public class Coordinate {
 
 	@Override
 	public String toString() {
-		return "Coordinate [Row=" + row + ", Column=" + column + "]";
+		return "(" + row + ", " + column + ")";
 	}
 	
 }

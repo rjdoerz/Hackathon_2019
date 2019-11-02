@@ -7,7 +7,7 @@ import model.Tile;
 public class TileGenerator {
 	
 	private Tile[][] tiles;
-	private Tile startTile, endTile;
+	private Tile startTile, endTile, wpCheck;
 	private Random random;
 	
 	public TileGenerator() {
@@ -89,7 +89,7 @@ public class TileGenerator {
 	public Tile[][] generateWaypoints(int numOfPoints){
 		boolean isRow = checkOrientation(startTile);
 		Tile thisTile = startTile;
-		System.out.println("isRow : " + isRow);
+		System.out.println(isRow ? "Vertical" : "Horizontal");
 		
 		int min = 1;
 		int max;
@@ -114,14 +114,13 @@ public class TileGenerator {
 				i--;
 				continue;
 			} else if (tiles[pointB][pointA].getCoordinate().compareCoordinate(thisTile.getCoordinate(), 2)) {
-				System.out.println(1);
 				i--;
 				continue;
 			}
 			min = max + 1;
 			
 			thisTile = tiles[pointB][pointA];
-			thisTile.setWaypoint();
+			thisTile.setWaypoint(true);
 			System.out.print("P" + (i+1) + " ");
 			Printer.print(thisTile);
 			thisTile.getButton().setText("P" + (i+1));
@@ -149,9 +148,11 @@ public class TileGenerator {
 		Tile[] wpTiles = getWaypoints(numOfPoints);	// List of all waypoints
 			
 			// Print waypoints to console
+		System.out.println("ST: " + startTile.getCoordinate());
 			for(int i = 0; i < wpTiles.length; i++) {
-				System.out.println("WP " + i + ": " + wpTiles[i].getCoordinate().toString());
+				System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate().toString());
 			}
+		System.out.println("ED: " + endTile.getCoordinate());
 		
 		Tile thisTile = startTile;	
 		// Step counter
@@ -160,6 +161,7 @@ public class TileGenerator {
 		for(int i = 0; i <= wpTiles.length;) {
 			Tile wpTile = null;
 			// wpTile = next WP
+			// If all WP have been used, go to the endTile
 			if(i == wpTiles.length) {
 				wpTile = endTile;
 			} else {
@@ -181,7 +183,9 @@ public class TileGenerator {
 				
 			// else pick a random direction
 			} else {
-				if(random.nextBoolean()) { // If true: move row. If false: move col
+				boolean direct = random.nextBoolean();
+				System.out.println(direct ? "Go row" : "Go column");
+				if(direct) { // If true: move row. If false: move col
 					thisTile = byRow(thisTile, wpTile, c);
 //					System.out.println(5);
 				} else {
@@ -191,11 +195,15 @@ public class TileGenerator {
 			}
 			
 //			System.out.println(7);
+			// If the new tile is a waypoint (waypoint is found), start looking for next waypoint.
 			if(thisTile.isWaypoint()) {
-				System.out.println("Waypoint " + wpTiles[i].getButton().getText());
-				i++;
+				if(wpCheck == null || wpCheck != thisTile) {
+					System.out.println("Waypoint " + wpTiles[i].getButton().getText() + " " + thisTile.getCoordinate());
+					i++;
+				}
 //				System.out.println(8);
 			}
+			// If the button has no text, print the step counter on button
 			if(thisTile.getButton().getText().isEmpty()) {
 //				System.out.println(9);
 				thisTile.getButton().setText(String.valueOf(c++));
@@ -212,14 +220,20 @@ public class TileGenerator {
 		
 		if(thisColumn < wpColumn) {
 			if(checkRight(thisTile)) {
-				System.out.println(c + " Column +");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column + ");
 				return nextColumn(thisTile);
+			} 
+			else {
+				byRow(thisTile, wpTile, c);
 			}
 		} else if (thisColumn > wpColumn) {
 			if(checkLeft(thisTile)) {
-				System.out.println(c + " Column -");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
 				return lastColumn(thisTile);
-			}
+			} 
+//			else {
+//				byRow(thisTile, wpTile, c);
+//			}
 		}
 		return thisTile;
 	}
@@ -232,102 +246,46 @@ public class TileGenerator {
 		if(thisRow < wpRow) {
 			// Check the tile below
 			if(checkDown(thisTile)) {
-				System.out.println(c + " Row +");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
 				return nextRow(thisTile);
-			}
+			} 
+//			else {
+//				byColumn(thisTile, wpTile, c);
+//			}
 		} else if (thisRow > wpRow) {
 			// Check tile above
 			if(checkUp(thisTile)) {
-				System.out.println(c + " Row -");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
 				return lastRow(thisTile);
-			}
+			} 
+//			else {
+//				byColumn(thisTile, wpTile, c);
+//			}
 		}
 		return thisTile;
 	}
 
-//	private void tryColumn(Tile thisTile, Tile wpTile, int c) {
-//		int thisRow = thisTile.getCoordinate().getRow();
-//		int thisColumn = thisTile.getCoordinate().getColumn();
-//		int wpRow = wpTile.getCoordinate().getRow();
-//		int wpColumn = wpTile.getCoordinate().getColumn();
-//		
-//		if(thisColumn == wpColumn) {
-//			if(thisRow > wpRow) {
-//				if(checkUp(thisTile)) {
-//					System.out.println(c + " Row -");
-//					thisTile = lastRow(thisTile);
-//				} // else ?
-//			} else {
-//				if(checkDown(thisTile)) {
-//					System.out.println(c + " Row +");
-//					thisTile = nextRow(thisTile);
-//				} // else ?
-//			}
-//		} else {
-//			if(checkRight(thisTile)) {
-//				System.out.println(c + " Column +");
-//				thisTile = nextColumn(thisTile);
-//			} else if(thisRow < wpRow) {
-//				if(checkDown(thisTile)){
-//					System.out.println(c + " Row +");
-//					thisTile = nextRow(thisTile);
-//				}
-//			} else if(thisRow > wpRow) {
-//				if(checkUp(thisTile)){
-//					System.out.println(c + " Row -");
-//					thisTile = lastRow(thisTile);
-//				}
-//			}
-//		}
-//	}
-//	
-//	private void tryRow(Tile thisTile, Tile wpTile, int c) {
-//		int thisRow = thisTile.getCoordinate().getRow();
-//		int thisColumn = thisTile.getCoordinate().getColumn();
-//		int wpRow = wpTile.getCoordinate().getRow();
-//		int wpColumn = wpTile.getCoordinate().getColumn();
-//		if(thisRow == wpRow) {
-//			if(thisColumn > wpColumn) {
-//				if(checkLeft(thisTile)) {
-//					System.out.println(c + " Column -");
-//					thisTile = lastColumn(thisTile);
-//				}
-//			} else {
-//				if(checkRight(thisTile)) {
-//					System.out.println(c + " Column +");
-//					thisTile = nextColumn(thisTile);
-//				}
-//			}
-//		} else {
-//			if(checkDown(thisTile)) {
-//				System.out.println(c + " Row +");
-//				thisTile = nextRow(thisTile);
-//			} else if(thisColumn < wpColumn) {
-//				if(checkRight(thisTile)) {
-//					System.out.println(c + " Column +");
-//					thisTile = nextColumn(thisTile);
-//				}
-//			} else if(thisColumn > wpColumn) {
-//				if(checkLeft(thisTile)) {
-//					System.out.println(c + " Column -");
-//					thisTile = lastColumn(thisTile);
-//				}
-//			}
-//		}
-//	}
 
 	// Probably don't need return types... since objects are passed by reference. But w/e. >.<
 	private Tile nextRow(Tile thisTile) {
-		return tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() + 1];
+		Tile t = tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() + 1];
+		System.out.println(t.getCoordinate());
+		return t;
 	}
 	private Tile lastRow(Tile thisTile) {
-		return tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() - 1];
+		Tile t = tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() - 1];
+		System.out.println(t.getCoordinate());
+		return t;
 	}
 	private Tile nextColumn(Tile thisTile) {
-		return tiles[thisTile.getCoordinate().getColumn() + 1][thisTile.getCoordinate().getRow()];
+		Tile t = tiles[thisTile.getCoordinate().getColumn() + 1][thisTile.getCoordinate().getRow()];
+		System.out.println(t.getCoordinate());
+		return t;
 	}
 	private Tile lastColumn(Tile thisTile) {
-		return tiles[thisTile.getCoordinate().getColumn() -1][thisTile.getCoordinate().getRow()];
+		Tile t = tiles[thisTile.getCoordinate().getColumn() -1][thisTile.getCoordinate().getRow()];
+		System.out.println(t.getCoordinate());
+		return t;
 	}
 	
 	
@@ -340,11 +298,12 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(column < tiles.length-1) {
-			if(tiles[row][column + 1].isWaypoint())
+			if(tiles[column + 1][row].isWaypoint())
 				return true;
-			if(tiles[row][column + 1].getButton().getText().isEmpty()) 
+			if(tiles[column + 1][row].getButton().getText().isEmpty()) 
 				return true;
 		}
+		System.out.println("Check failed: RIGHT");
 		return false;
 	}
 	private boolean checkLeft(Tile tile) {
@@ -352,11 +311,12 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(column > 0) {
-			if(tiles[row][column - 1].isWaypoint())
+			if(tiles[column - 1][row].isWaypoint())
 				return true;
-			if(tiles[row][column - 1].getButton().getText().isEmpty())
+			if(tiles[column - 1][row].getButton().getText().isEmpty())
 				return true;
 		}
+		System.out.println("Check failed: LEFT");
 		return false;
 	}
 	private boolean checkUp(Tile tile) {
@@ -364,11 +324,12 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(row > 0) {
-			if(tiles[row - 1][column].isWaypoint())
+			if(tiles[column][row - 1].isWaypoint())
 				return true;
-			if(tiles[row - 1][column].getButton().getText().isEmpty()) 
+			if(tiles[column][row - 1].getButton().getText().isEmpty()) 
 				return true;
 		}
+		System.out.println("Check failed: UP");
 		return false;
 	}
 	private boolean checkDown(Tile tile) {
@@ -376,24 +337,40 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(row < tiles.length-1) {
-			if(tiles[row + 1][column].isWaypoint())
-				return false;
-			if(tiles[row + 1][column].getButton().getText().isEmpty()) 
+			if(tiles[column][row + 1].isWaypoint())
+				return true;
+			if(tiles[column][row + 1].getButton().getText().isEmpty()) 
 				return true;
 		}
+		System.out.println("Check failed: DOWN");
 		return false;
 	}
 
+	// MEGA SPAGHETT
 	private Tile[] getWaypoints(int numOfPoints) {
+		Tile p1 = null, p2 = null, p3 = null, p4 = null;
 		Tile[] wpTiles = new Tile[numOfPoints];
 		int i = 0;
 		for(Tile[] t : tiles) {
 			for(Tile e : t) {
 				if(e.isWaypoint()) {
-					wpTiles[i++] = e;
+					switch(e.getButton().getText()) {
+					case "P1" : p1 = e;
+					break;
+					case "P2" : p2 = e;
+					break;
+					case "P3" : p3 = e;
+					break;
+					case "P4" : p4 = e;
+					break;
+					}
 				}
 			}
 		}
+		wpTiles[0] = p1;
+		wpTiles[1] = p2;
+		wpTiles[2] = p3;
+		wpTiles[3] = p4;
 		return wpTiles;
 	}
 }
