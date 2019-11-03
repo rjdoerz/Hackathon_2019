@@ -2,8 +2,10 @@ package view;
 
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Coordinate;
@@ -16,6 +18,7 @@ public class PlayWindow {
 	private Tile[][] tiles;
 //	private Button leftBtn, ritBtn, upBtn, dwnBtn;
 	private Button remap;
+	private Label space;
 	private int size;
 //	private Random random;
 //	private TileList tileList;
@@ -46,7 +49,8 @@ public class PlayWindow {
 	private void drawPane() {
 		drawTiles();
 		
-		grid.add(remap, size /2, size + 1, 2, 2);
+		grid.add(space, size/2, size + 1);
+		grid.add(remap, size /2, size + 2, 2, 2);
 	}
 
 	private void drawTiles() {
@@ -80,13 +84,17 @@ public class PlayWindow {
 		tileGen = new TileGenerator();
 		
 		remap = new Button("Remap");
+		space = new Label(" ");
 		
 		grid = new GridPane();
-		grid.setPadding(new Insets(10));
+		grid.setPadding(new Insets(5));
+		grid.setHgap(-2.0);
+		grid.setVgap(-2.0);
+		grid.setAlignment(Pos.CENTER);
 		
 		tiles = new Tile[size][size];
 		
-		Scene scene = new Scene(grid, (size * 50) + 20, (size * 50) + 80);
+		Scene scene = new Scene(grid, (size * 50), (size * 50) + 40);
 		Stage stage = new Stage();
 		stage.setScene(scene);
 		stage.show();

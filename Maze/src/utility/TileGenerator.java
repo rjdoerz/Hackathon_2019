@@ -9,6 +9,7 @@ public class TileGenerator {
 	private Tile[][] tiles;
 	private Tile startTile, endTile, wpCheck;
 	private Random random;
+	private int errCount;
 	
 	public TileGenerator() {
 		this.startTile = null;
@@ -145,6 +146,7 @@ public class TileGenerator {
 
 
 	public void connectWaypoints(int numOfPoints) {
+		errCount = 0;
 		Tile[] wpTiles = getWaypoints(numOfPoints);	// List of all waypoints
 			
 			// Print waypoints to console
@@ -158,31 +160,28 @@ public class TileGenerator {
 		Tile thisTile = startTile;	
 		// Step counter
 		int c = 1;
-//		System.out.println(1);
 		
 		System.out.println("Start! " + thisTile.getCoordinate());
 		for(int i = 0; i <= wpTiles.length;) {
 			Tile wpTile = null;
-			// wpTile = next WP
-			// If all WP have been used, go to the endTile
+			// wpTile = next Waypoint
+			
+			// If all Waypoints have been used, go to the endTile
 			if(i == wpTiles.length) {
 				wpTile = endTile;
 			} else {
 				wpTile = wpTiles[i];
 			}
-//			System.out.println(2);
 			
 			// if thisTile.column = wpTile.column (Column values are equal)
 			if(thisTile.getCoordinate().getColumn() == wpTile.getCoordinate().getColumn()) {
 				// Move up/down by row
 				thisTile = byRow(thisTile, wpTile, c);
-//				System.out.println(3);
 				
 			// else if thisTile.row = wpTile.row (row values are equal)
 			} else if (thisTile.getCoordinate().getRow() == wpTile.getCoordinate().getRow()) {
 				// Move left/right by column
 				thisTile = byColumn(thisTile, wpTile, c);
-//				System.out.println(4);
 				
 			// else pick a random direction
 			} else {
@@ -190,14 +189,15 @@ public class TileGenerator {
 				System.out.println(direct ? "Go row" : "Go column");
 				if(direct) { // If true: move row. If false: move col
 					thisTile = byRow(thisTile, wpTile, c);
-//					System.out.println(5);
 				} else {
 					thisTile = byColumn(thisTile, wpTile, c);
-//					System.out.println(6);
 				}
 			}
-			
-//			System.out.println(7);
+			if(thisTile == null) {
+				System.err.println("\n *** Path Trace Error! *** \n");
+				break;
+			}
+			errCount = 0;
 			// If the new tile is a waypoint (waypoint is found), start looking for next waypoint.
 			if(thisTile.isWaypoint()) {
 				if((wpCheck == null || wpCheck != thisTile)) {
@@ -209,14 +209,11 @@ public class TileGenerator {
 					System.out.println("Waypoint " + wpTiles[i].getButton().getText() + " " + thisTile.getCoordinate());
 					i++;
 				} 
-//				System.out.println(8);
 			}
 			// If the button has no text, print the step counter on button
 			if(thisTile.getButton().getText().isEmpty()) {
-//				System.out.println(9);
 				thisTile.getButton().setText(String.valueOf(c++));
 			}else if(thisTile.getButton().getText().contains("E")) {
-//				System.out.println(10);
 				break;
 			}
 		}
@@ -225,6 +222,10 @@ public class TileGenerator {
 	private Tile byColumn(Tile thisTile, Tile wpTile, int c) {
 		int thisColumn = thisTile.getCoordinate().getColumn();
 		int wpColumn = wpTile.getCoordinate().getColumn();
+		
+		if(errCount == 10) {
+			return null;
+		}
 		
 		if(thisColumn < wpColumn) {
 			if(checkRight(thisTile)) {
@@ -251,6 +252,10 @@ public class TileGenerator {
 	private Tile byRow(Tile thisTile, Tile wpTile, int c) {
 		int thisRow = thisTile.getCoordinate().getRow();
 		int wpRow = wpTile.getCoordinate().getRow();
+		
+		if(errCount == 10) {
+			return null;
+		}
 		
 		// If this row is less than the wpRow (higher up)
 		if(thisRow < wpRow) {
@@ -316,6 +321,7 @@ public class TileGenerator {
 				return true;
 		}
 		System.out.println("Check failed: RIGHT");
+		errCount++;
 		return false;
 	}
 	private boolean checkLeft(Tile tile) {
@@ -329,6 +335,7 @@ public class TileGenerator {
 				return true;
 		}
 		System.out.println("Check failed: LEFT");
+		errCount++;
 		return false;
 	}
 	private boolean checkUp(Tile tile) {
@@ -342,6 +349,7 @@ public class TileGenerator {
 				return true;
 		}
 		System.out.println("Check failed: UP");
+		errCount++;
 		return false;
 	}
 	private boolean checkDown(Tile tile) {
@@ -355,37 +363,29 @@ public class TileGenerator {
 				return true;
 		}
 		System.out.println("Check failed: DOWN");
+		errCount++;
 		return false;
 	}
 
-	// MEGA SPAGHETT
 	private Tile[] getWaypoints(int numOfPoints) {
-		Tile p1 = null, p2 = null, p3 = null, p4 = null;
 		Tile[] wpTiles = new Tile[numOfPoints];
-		int i = 0;
-		for(Tile[] t : tiles) {
-			for(Tile e : t) {
-				if(e.isWaypoint()) {
-					wpTiles[i++] = e;
+		int n = 0;
+		
+		for(int i = 0; i < tiles.length; i++) {
+			for(int j = 0; j < tiles.length; j++) {
+				Tile t;
+				
+				if(checkOrientation(startTile)) 
+					t = tiles[j][i];
+				else
+					t = tiles[i][j];
+				
+				if(t.isWaypoint()) {
+					wpTiles[n++] = t;
 				}
 			}
 		}
-		
-		return arrSort(wpTiles);
+		return wpTiles;
 	}
 	
-	// Yeah. Bubble sort. Gonna need you to get way off my back about that.
-	private Tile[] arrSort(Tile[] wpTiles)    {
-        Tile temp;
-        for (int i = 0; i < wpTiles.length; i++) {
-            for (int j = i + 1; j < wpTiles.length; j++) {
-                if (wpTiles[i].getButton().getText().compareTo(wpTiles[j].getButton().getText()) == 1) {
-                    temp = wpTiles[i];
-                    wpTiles[i] = wpTiles[j];
-                    wpTiles[j] = temp;
-                }
-            }
-        }
-        return wpTiles;
-    }
 }

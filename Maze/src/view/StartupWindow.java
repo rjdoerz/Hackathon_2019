@@ -55,7 +55,7 @@ public class StartupWindow {
 		grid.setVgap(10);
 		grid.setHgap(10);
 		
-		sizeSpn = new Spinner<Integer>(4, 20, 10);
+		sizeSpn = new Spinner<Integer>(7, 20, 10);
 		
 		okBtn = new Button("GO!");
 		okBtn.setMinHeight(50);
