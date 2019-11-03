@@ -1,6 +1,5 @@
 package view;
 
-import java.util.Random;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -9,7 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Coordinate;
 import model.Tile;
-import model.TileList;
 import utility.TileGenerator;
 
 public class PlayWindow {
@@ -33,6 +31,7 @@ public class PlayWindow {
 
 	private void callbacks() {
 		remap.setOnAction(e -> {
+			System.out.println("\n== == ==\n");
 			newTiles();
 		});
 	}
@@ -40,6 +39,7 @@ public class PlayWindow {
 	private void newTiles() {
 		grid.getChildren().clear();
 		drawPane();
+		tileGen.connectWaypoints(4);
 	}
 
 

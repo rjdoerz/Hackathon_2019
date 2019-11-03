@@ -25,32 +25,6 @@ public class Tile {
 		this.isWaypoint = b;
 	}
 	
-//	public void setNextX() {
-//		coordinate.setX(coordinate.getX() + 1);
-//	}
-//	public void setLastX() {
-//		coordinate.setX(coordinate.getX() - 1);
-//	}
-//	public void setNextY() {
-//		coordinate.setY(coordinate.getY() + 1);
-//	}
-//	public void setLastY() {
-//		coordinate.setY(coordinate.getY() - 1);
-//	}
-	
-//	public int getNextX() {
-//		return coordinate.getX() + 1;
-//	}
-//	public int getLastX() {
-//		return coordinate.getX() - 1;
-//	}
-//	public int getNextY() {
-//		return coordinate.getY()+ 1;
-//	}
-//	public int getLastY() {
-//		return coordinate.getY() - 1;
-//	}
-
 	public Coordinate getCoordinate() {
 		return coordinate;
 	}

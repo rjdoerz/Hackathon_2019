@@ -89,7 +89,7 @@ public class TileGenerator {
 	public Tile[][] generateWaypoints(int numOfPoints){
 		boolean isRow = checkOrientation(startTile);
 		Tile thisTile = startTile;
-		System.out.println(isRow ? "Vertical" : "Horizontal");
+		System.out.println(isRow ? "Horizontal" : "Vertical");
 		
 		int min = 1;
 		int max;
@@ -152,12 +152,15 @@ public class TileGenerator {
 			for(int i = 0; i < wpTiles.length; i++) {
 				System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate().toString());
 			}
-		System.out.println("ED: " + endTile.getCoordinate());
-		
+		System.out.println("ED: " + endTile.getCoordinate() + "\n");
+		startTile.setWaypoint(true);
+		endTile.setWaypoint(true);
 		Tile thisTile = startTile;	
 		// Step counter
 		int c = 1;
 //		System.out.println(1);
+		
+		System.out.println("Start! " + thisTile.getCoordinate());
 		for(int i = 0; i <= wpTiles.length;) {
 			Tile wpTile = null;
 			// wpTile = next WP
@@ -197,10 +200,15 @@ public class TileGenerator {
 //			System.out.println(7);
 			// If the new tile is a waypoint (waypoint is found), start looking for next waypoint.
 			if(thisTile.isWaypoint()) {
-				if(wpCheck == null || wpCheck != thisTile) {
+				if((wpCheck == null || wpCheck != thisTile)) {
+					wpCheck = thisTile;
+					if(wpCheck == endTile) {
+						System.out.println("Found End! " + thisTile.getCoordinate());
+						break;
+					}
 					System.out.println("Waypoint " + wpTiles[i].getButton().getText() + " " + thisTile.getCoordinate());
 					i++;
-				}
+				} 
 //				System.out.println(8);
 			}
 			// If the button has no text, print the step counter on button
@@ -224,16 +232,18 @@ public class TileGenerator {
 				return nextColumn(thisTile);
 			} 
 			else {
-				byRow(thisTile, wpTile, c);
+				System.out.println("Trying row");
+				thisTile = byRow(thisTile, wpTile, c);
 			}
 		} else if (thisColumn > wpColumn) {
 			if(checkLeft(thisTile)) {
 				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
 				return lastColumn(thisTile);
 			} 
-//			else {
-//				byRow(thisTile, wpTile, c);
-//			}
+			else {
+				System.out.println("Trying row");
+				thisTile = byRow(thisTile, wpTile, c);
+			}
 		}
 		return thisTile;
 	}
@@ -249,18 +259,20 @@ public class TileGenerator {
 				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
 				return nextRow(thisTile);
 			} 
-//			else {
-//				byColumn(thisTile, wpTile, c);
-//			}
+			else {
+				System.out.println("Trying column");
+				thisTile = byColumn(thisTile, wpTile, c);
+			}
 		} else if (thisRow > wpRow) {
 			// Check tile above
 			if(checkUp(thisTile)) {
 				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
 				return lastRow(thisTile);
 			} 
-//			else {
-//				byColumn(thisTile, wpTile, c);
-//			}
+			else {
+				System.out.println("Trying column");
+				thisTile = byColumn(thisTile, wpTile, c);
+			}
 		}
 		return thisTile;
 	}
@@ -354,23 +366,26 @@ public class TileGenerator {
 		for(Tile[] t : tiles) {
 			for(Tile e : t) {
 				if(e.isWaypoint()) {
-					switch(e.getButton().getText()) {
-					case "P1" : p1 = e;
-					break;
-					case "P2" : p2 = e;
-					break;
-					case "P3" : p3 = e;
-					break;
-					case "P4" : p4 = e;
-					break;
-					}
+					wpTiles[i++] = e;
 				}
 			}
 		}
-		wpTiles[0] = p1;
-		wpTiles[1] = p2;
-		wpTiles[2] = p3;
-		wpTiles[3] = p4;
-		return wpTiles;
+		
+		return arrSort(wpTiles);
 	}
+	
+	// Yeah. Bubble sort. Gonna need you to get way off my back about that.
+	private Tile[] arrSort(Tile[] wpTiles)    {
+        Tile temp;
+        for (int i = 0; i < wpTiles.length; i++) {
+            for (int j = i + 1; j < wpTiles.length; j++) {
+                if (wpTiles[i].getButton().getText().compareTo(wpTiles[j].getButton().getText()) == 1) {
+                    temp = wpTiles[i];
+                    wpTiles[i] = wpTiles[j];
+                    wpTiles[j] = temp;
+                }
+            }
+        }
+        return wpTiles;
+    }
 }
