@@ -141,7 +141,7 @@ public class TileGenerator {
 		// Step counter
 		int c = 1;
 		
-		System.out.println("Start! " + thisTile.getCoordinate());
+		System.out.println("Path Trace Start: " + thisTile.getCoordinate());
 		for(int i = 0; i <= wpTiles.length;) {
 			Tile wpTile = null;
 			// wpTile = next Waypoint
@@ -166,7 +166,7 @@ public class TileGenerator {
 			// else pick a random direction
 			} else {
 				boolean direct = random.nextBoolean();
-				System.out.println(direct ? "Go row" : "Go column");
+				System.out.println(direct ? "Move row" : "Move column");
 				if(direct) { // If true: move row. If false: move col
 					thisTile = byRow(thisTile, wpTile, c);
 				} else {
@@ -183,10 +183,11 @@ public class TileGenerator {
 				if((wpCheck == null || wpCheck != thisTile)) {
 					wpCheck = thisTile;
 					if(wpCheck == endTile) {
-						System.out.println("Found End! " + thisTile.getCoordinate());
+						System.out.println("Found: End " + thisTile.getCoordinate());
+						System.out.println("Path Trace Complete.");
 						break;
 					}
-					System.out.println("Waypoint " + wpTiles[i].getButton().getText() + " " + thisTile.getCoordinate());
+					System.out.println("Found: Waypoint " + wpTiles[i].getButton().getText() + " " + thisTile.getCoordinate());
 					i++;
 				} 
 			}
@@ -215,20 +216,20 @@ public class TileGenerator {
 		
 		if(thisColumn < wpColumn) {
 			if(checkRight(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Column + ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
 				return nextColumn(thisTile);
 			} 
 			else {
-				System.out.println("Trying row");
+				System.out.println("Trying row...");
 				thisTile = byRow(thisTile, wpTile, c);
 			}
 		} else if (thisColumn > wpColumn) {
 			if(checkLeft(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
 				return lastColumn(thisTile);
 			} 
 			else {
-				System.out.println("Trying row");
+				System.out.println("Trying row...");
 				thisTile = byRow(thisTile, wpTile, c);
 			}
 		}
@@ -247,21 +248,21 @@ public class TileGenerator {
 		if(thisRow < wpRow) {
 			// Check the tile below
 			if(checkDown(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column + ");
 				return nextRow(thisTile);
 			} 
 			else {
-				System.out.println("Trying column");
+				System.out.println("Trying column...");
 				thisTile = byColumn(thisTile, wpTile, c);
 			}
 		} else if (thisRow > wpRow) {
 			// Check tile above
 			if(checkUp(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
 				return lastRow(thisTile);
 			} 
 			else {
-				System.out.println("Trying column");
+				System.out.println("Trying column...");
 				thisTile = byColumn(thisTile, wpTile, c);
 			}
 		}
@@ -291,7 +292,6 @@ public class TileGenerator {
 		return t;
 	}
 	
-	
 	/*
 	 * Check next points need to be examined. 
 	 */
@@ -303,7 +303,8 @@ public class TileGenerator {
 		if(column < tiles.length-1) {
 			if(tiles[column + 1][row].isWaypoint())
 				return true;
-			if(tiles[column + 1][row].getButton().getText().isEmpty()) 
+//			if(tiles[column + 1][row].getButton().getText().isEmpty()) 
+			if(tiles[column + 1][row].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: RIGHT");
@@ -317,7 +318,8 @@ public class TileGenerator {
 		if(column > 0) {
 			if(tiles[column - 1][row].isWaypoint())
 				return true;
-			if(tiles[column - 1][row].getButton().getText().isEmpty())
+//			if(tiles[column - 1][row].getButton().getText().isEmpty())
+			if(tiles[column - 1][row].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: LEFT");
@@ -331,7 +333,8 @@ public class TileGenerator {
 		if(row > 0) {
 			if(tiles[column][row - 1].isWaypoint())
 				return true;
-			if(tiles[column][row - 1].getButton().getText().isEmpty()) 
+//			if(tiles[column][row - 1].getButton().getText().isEmpty()) 
+			if(tiles[column][row - 1].isEmpty()) 
 				return true;
 		}
 		System.out.println("Check failed: UP");
@@ -345,7 +348,8 @@ public class TileGenerator {
 		if(row < tiles.length-1) {
 			if(tiles[column][row + 1].isWaypoint())
 				return true;
-			if(tiles[column][row + 1].getButton().getText().isEmpty()) 
+//			if(tiles[column][row + 1].getButton().getText().isEmpty()) 
+			if(tiles[column][row + 1].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: DOWN");

@@ -87,8 +87,11 @@ public class PlayWindow {
 	}
 
 	private void drawTiles() {
-		for (int column = 0; column < size; column++) {
-			for (int row = 0; row < size; row++) {
+		// THESE ARE BACKWARDS. FIX???
+//		for (int column = 0; column < size; column++) {
+		for (int row = 0; row < size; row++) {
+//			for (int row = 0; row < size; row++) {
+			for (int column = 0; column < size; column++) {
 				int row1 = row;
 				int col1 = column;
 				tileGrid[column][row] = new Tile(new Coordinate(row, column));
