@@ -64,7 +64,7 @@ public class PlayWindow {
 				System.err.println("THIS SHOULD NEVER HAPPEN! See: PlayWindow/setTileFlags");
 			}
 			t.setPathFlags((tileList.get(index-1)), (tileList.get(index+1)));
-			t.assignArt();
+//			t.assignArt();
 		}
 		generateFalsePaths();
 	}
@@ -75,7 +75,7 @@ public class PlayWindow {
 				t.assignArt();
 				continue;
 			}
-			FalseRecursion.falsePathing(tileGrid, tileList, t);
+			FalseRecursion.falsePathing(tileGrid, t);
 		}
 	}
 

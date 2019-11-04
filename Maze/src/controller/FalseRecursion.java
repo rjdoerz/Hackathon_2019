@@ -15,11 +15,10 @@ public abstract class FalseRecursion {
 	 *  Logic: 1 in ODDS chance of opening a false tile. 
 	 *  If ODDS = 3, then there is a 1/3 chance of opening a false tile.
 	 */
-	private final static int ODDS = 1;
+	private final static int ODDS = 2;
 	
-	public static void falsePathing(Tile[][] tileGrid, TileList tileList, Tile t) {
+	public static void falsePathing(Tile[][] tileGrid, Tile t) {
 		FalseRecursion.grid = tileGrid;
-		FalseRecursion.tileList = tileList;
 		
 		falsePathing(t);
 	}
@@ -27,22 +26,31 @@ public abstract class FalseRecursion {
 	private static void falsePathing(Tile t) {
 		int thisRow = t.getCoordinate().getRow();
 		int thisCol = t.getCoordinate().getColumn();
+		Tile next;
 		
 		if(checkUp(t) && random.nextInt(ODDS) == 0) {
 			t.setUp(true);
-			falsePathing(grid[thisCol][thisRow-1]);
+			next = grid[thisCol][thisRow-1];
+			next.setDown(true);
+			falsePathing(next);
 		}
 		if(checkRight(t) && random.nextInt(ODDS) == 0) {
 			t.setRight(true);
-			falsePathing(grid[thisCol+1][thisRow]);
+			next = grid[thisCol+1][thisRow];
+			next.setLeft(true);
+			falsePathing(next);
 		}
 		if(checkDown(t) && random.nextInt(ODDS) == 0) {
 			t.setDown(true);
-			falsePathing(grid[thisCol][thisRow+1]);
+			next = grid[thisCol][thisRow+1];
+			next.setUp(true);
+			falsePathing(next);
 		}
 		if(checkLeft(t) && random.nextInt(ODDS) == 0) {
 			t.setLeft(true);
-			falsePathing(grid[thisCol-1][thisRow]);
+			next = grid[thisCol-1][thisRow];
+			next.setRight(true);
+			falsePathing(next);
 		}
 		
 	}
@@ -55,8 +63,8 @@ public abstract class FalseRecursion {
 			return false;
 		} else if(grid[thisCol][thisRow-1].isEmpty()) {
 			return true;
-		}
-		return false;
+		} else
+			return false;
 	}
 	
 	private static boolean checkDown(Tile t) {
@@ -67,8 +75,8 @@ public abstract class FalseRecursion {
 			return false;
 		} else if(grid[thisCol][thisRow+1].isEmpty()) {
 			return true;
-		}
-		return false;
+		} else 
+			return false;
 	}
 	
 	private static boolean checkLeft(Tile t) {
@@ -79,8 +87,8 @@ public abstract class FalseRecursion {
 			return false;
 		} else if(grid[thisCol-1][thisRow].isEmpty()) {
 			return true;
-		}
-		return false;
+		} else 
+			return false;
 	}
 	
 	private static boolean checkRight(Tile t) {
@@ -91,7 +99,7 @@ public abstract class FalseRecursion {
 			return false;
 		} else if(grid[thisCol+1][thisRow].isEmpty()) {
 			return true;
-		}
-		return false;
+		} else 
+			return false;
 	}
 }

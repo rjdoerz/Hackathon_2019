@@ -135,12 +135,12 @@ public class Tile {
 		}
 		
 		// END DOWN
-		else if(hasUp == false && hasDown == true && hasLeft == false && hasRight == true) {
+		else if(hasUp == false && hasDown == true && hasLeft == false && hasRight == false) {
 			applyArt(new File(IMG_DIR + "EndDown.jpg"));
 		}
 		
 		// END LEFT
-		else if(hasUp == false && hasDown == false && hasLeft == true && hasRight == true) {
+		else if(hasUp == false && hasDown == false && hasLeft == true && hasRight == false) {
 			applyArt(new File(IMG_DIR + "EndLeft.jpg"));
 		}
 		
@@ -150,7 +150,7 @@ public class Tile {
 		}
 		
 		// END UP
-		else if(hasUp == true && hasDown == false && hasLeft == false && hasRight == true) {
+		else if(hasUp == true && hasDown == false && hasLeft == false && hasRight == false) {
 			applyArt(new File(IMG_DIR + "EndUp.jpg"));
 		}
 	}
