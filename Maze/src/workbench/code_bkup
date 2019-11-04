@@ -1,0 +1,67 @@
+		/*
+		 * The code below randomizes the side of the maze in which the start and end points spawn at.
+		 * Each point is independent of one another; meaning the Start point can spawn on either top or left side
+		 * while the End point can spawn on either the bottom or right side.
+		 * 
+		 * While I would prefer this code to stay implemented, using the waypoint system I designed to steer the 
+		 * maze from start to end works better if the start and end points are always opposite each other. 
+		 * 
+		 * Until I can devise a way to create sequential waypoint zones that work with the start and end points being 
+		 * completely random, the following code cannot be implemented.
+		 */
+/*		if(random.nextBoolean() == true) {
+			// Start location is on first row.
+			startTile = tiles[0][random.nextInt(size - 3 - 3) + 3];
+		} else {
+			// Start location is on first column.
+			startTile = tiles[random.nextInt(size - 3 - 3) + 3][0];
+		}
+		
+		if(random.nextBoolean() == true) {
+			// End location is on last row.
+			endTile = tiles[size-1][random.nextInt(size - 3 - 3) + 3];
+		} else {
+			// End location is on last column.
+			endTile = tiles[random.nextInt(size - 3 - 3) + 3][size-1];
+		}
+*/		
+
+
+
+
+	public void setPathFlags(Tile prev, Tile next) {
+		// PREVIOUS CHECKER
+		int pRow = this.getCoordinate().getRow() - prev.getCoordinate().getRow();
+		int pCol = this.getCoordinate().getColumn() - prev.getCoordinate().getColumn();
+		if(pRow == 0) {
+			if(pCol < 0)
+//			if(pCol > 0)
+				setRight(true);
+			else if(pCol > 0)
+//			else if(pCol < 0)
+				setLeft(true);
+		} else if (pRow < 0)
+//		} else if (pRow > 0)
+			setDown(true);
+		else if (pRow > 0)
+//		else if (pRow < 0)
+			setUp(true);
+		
+		// NEXT CHECKER
+		int nRow = this.getCoordinate().getRow() - next.getCoordinate().getRow();
+		int nCol = this.getCoordinate().getColumn() - next.getCoordinate().getColumn();
+		if(nRow == 0) {
+			if(nCol < 0)
+//			if(nCol > 0)
+				setRight(true);
+			else if(nCol > 0)
+//			else if(nCol < 0)
+				setLeft(true);
+		} else if (nRow < 0)
+//		} else if (nRow > 0)
+			setDown(true);
+		else if (nRow > 0)
+//		else if (nRow < 0)
+			setUp(true);
+		
+	}

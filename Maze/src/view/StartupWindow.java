@@ -32,7 +32,8 @@ public class StartupWindow {
 			String str = sizeSpn.getValue().toString();
 			int xyDim = Integer.valueOf(str);
 			stage.close();
-			new PlayWindow(xyDim);
+			int difficulty = 4;										// DIFFICULTY SETTING
+			new PlayWindow(xyDim, difficulty);
 		});
 	}
 

@@ -3,6 +3,7 @@ package utility;
 import java.util.Random;
 
 import model.Tile;
+import model.TileList;
 
 public class TileGenerator {
 	
@@ -35,36 +36,12 @@ public class TileGenerator {
 	public Tile[][] generateStartEnd() {
 		int size = tiles.length;
 		
+
 		/*
-		 * The code below randomizes the side of the maze in which the start and end points spawn at.
-		 * Each point is independent of one another; meaning the Start point can spawn on either top or left side
-		 * while the End point can spawn on either the bottom or right side.
-		 * 
-		 * While I would prefer this code to stay implemented, using the waypoint system I designed to steer the 
-		 * maze from start to end works better if the start and end points are always opposite each other. 
-		 * 
-		 * Until I can devise a way to create sequential waypoint zones that work with the start and end points being 
-		 * completely random, the following code cannot be implemented.
-		 */
-/*		if(random.nextBoolean() == true) {
-			// Start location is on first row.
-			startTile = tiles[0][random.nextInt(size - 3 - 3) + 3];
-		} else {
-			// Start location is on first column.
-			startTile = tiles[random.nextInt(size - 3 - 3) + 3][0];
-		}
-		
-		if(random.nextBoolean() == true) {
-			// End location is on last row.
-			endTile = tiles[size-1][random.nextInt(size - 3 - 3) + 3];
-		} else {
-			// End location is on last column.
-			endTile = tiles[random.nextInt(size - 3 - 3) + 3][size-1];
-		}
-*/		
-		/*
-		 * Instead of the above code, the following forces the start and end points to always
+		 * The following forces the start and end points to always
 		 * be opposite of one another.
+		 * 
+		 * For randomized starting/ending points, see "code_bkup.txt" in workbench. [Line 12]
 		 */
 		if(random.nextBoolean() == true) {
 			// Start location is on first row.
@@ -76,6 +53,8 @@ public class TileGenerator {
 			endTile = tiles[random.nextInt(size - 3 - 3) + 3][size-1];
 		}
 		
+		startTile.setStart(true);
+		endTile.setEnd(true);
 		
 		// Apply Start and End markers to coordinates.
 		tiles[startTile.getCoordinate().getColumn()][startTile.getCoordinate().getRow()].getButton().setStyle("-fx-font-weight: bold;");
@@ -86,7 +65,6 @@ public class TileGenerator {
 	}
 	
 	
-	// THINK OF A WAY TO HONE IN ON END TILE
 	public Tile[][] generateWaypoints(int numOfPoints){
 		boolean isRow = checkOrientation(startTile);
 		Tile thisTile = startTile;
@@ -103,6 +81,7 @@ public class TileGenerator {
 			
 			int pointA, pointB;
 			
+			// Depending on maze orientation, build waypoints in specified direction.
 			if(isRow) {
 					pointA = (random.nextInt(max - min + 1)) + min;	
 					pointB = (random.nextInt(tiles.length));
@@ -134,26 +113,27 @@ public class TileGenerator {
 
 	private boolean checkOrientation(Tile startTile) {
 		// This method identifies the orientation of the tiles based on the starting tile.
-		// This is used to generate waypoints by placing them within groups of rows/columns between
-		// the start and end points.
 		int point;
 		point = startTile.getCoordinate().getColumn();
 		if(point == 0)
-			return false; 	// Orientation in rows
+			return false; 	// Orientation in columns
 		else
-			return true;	// Orientation in columns
+			return true;	// Orientation in rows
 	}
 
 
-	public void connectWaypoints(int numOfPoints) {
+	public TileList connectWaypoints(int numOfPoints) {
+		TileList solution = new TileList();
+		solution.add(startTile);
+		
 		errCount = 0;
 		Tile[] wpTiles = getWaypoints(numOfPoints);	// List of all waypoints
 			
-			// Print waypoints to console
+		// Print waypoints to console
 		System.out.println("ST: " + startTile.getCoordinate());
-			for(int i = 0; i < wpTiles.length; i++) {
-				System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate().toString());
-			}
+		for(int i = 0; i < wpTiles.length; i++) {
+			System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate().toString());
+		}
 		System.out.println("ED: " + endTile.getCoordinate() + "\n");
 		startTile.setWaypoint(true);
 		endTile.setWaypoint(true);
@@ -210,13 +190,19 @@ public class TileGenerator {
 					i++;
 				} 
 			}
+			
+			solution.add(thisTile);
+			
 			// If the button has no text, print the step counter on button
 			if(thisTile.getButton().getText().isEmpty()) {
 				thisTile.getButton().setText(String.valueOf(c++));
-			}else if(thisTile.getButton().getText().contains("E")) {
-				break;
 			}
+//			else if(thisTile.getButton().getText().contains("E")) {
+//				break;
+//			}
 		}
+		solution.add(endTile);
+		return solution;
 	}
 
 	private Tile byColumn(Tile thisTile, Tile wpTile, int c) {

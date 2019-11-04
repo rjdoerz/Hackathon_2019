@@ -1,6 +1,8 @@
 package view;
 
 
+
+import controller.FalseRecursion;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,26 +12,28 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Coordinate;
 import model.Tile;
+import model.TileList;
 import utility.TileGenerator;
 
 public class PlayWindow {
 	private GridPane grid;
 	private TileGenerator tileGen;
-	private Tile[][] tiles;
+	private Tile[][] tileGrid;
 //	private Button leftBtn, ritBtn, upBtn, dwnBtn;
 	private Button remap;
 	private Label space;
-	private int size;
+	private int size, wPoints;
 //	private Random random;
-//	private TileList tileList;
+	private TileList tileList;
 	
-	public PlayWindow(int size) {
+	public PlayWindow(int size, int wPoints) {
 		this.size = size;
+		this.wPoints = wPoints;
 		initializeNodes();
 		drawPane();
 		callbacks();
-		tileGen.connectWaypoints(4);
-//		tracePath();
+		tileList = tileGen.connectWaypoints(wPoints);
+		setTileFlags();
 	}
 
 	private void callbacks() {
@@ -42,9 +46,38 @@ public class PlayWindow {
 	private void newTiles() {
 		grid.getChildren().clear();
 		drawPane();
-		tileGen.connectWaypoints(4);
+		tileList = tileGen.connectWaypoints(wPoints);
+		setTileFlags();
 	}
 
+
+	private void setTileFlags() {
+		for(Tile t : tileList) {
+			if(t.isStart() || t.isEnd()) {
+				t.assignArt();
+				continue;
+			}
+			int index = -1;
+			if(t != tileList.getFirst() && t != tileList.getLast()) {
+				index = tileList.indexOf(t);
+			} else {
+				System.err.println("THIS SHOULD NEVER HAPPEN! See: PlayWindow/setTileFlags");
+			}
+			t.setPathFlags((tileList.get(index-1)), (tileList.get(index+1)));
+			t.assignArt();
+		}
+		generateFalsePaths();
+	}
+
+	private void generateFalsePaths() {
+		for(Tile t : tileList) {
+			if(t.isStart() || t.isEnd()) {
+				t.assignArt();
+				continue;
+			}
+			FalseRecursion.falsePathing(tileGrid, tileList, t);
+		}
+	}
 
 	private void drawPane() {
 		drawTiles();
@@ -58,41 +91,47 @@ public class PlayWindow {
 			for (int row = 0; row < size; row++) {
 				int row1 = row;
 				int col1 = column;
-				tiles[column][row] = new Tile(new Coordinate(row, column));
-				Button b = tiles[column][row].getButton();
-//				b.setText(row + ", " + column);
-//				b.setStyle("-fx-font-size: 10px;");
+				tileGrid[column][row] = new Tile(new Coordinate(row, column));
+				Button b = tileGrid[column][row].getButton();
+				b.setPadding(new Insets(-5));
 				b.setMinSize(50, 50);
 				grid.add(b, row, column);
 				
 				b.setOnAction(e ->{
-					System.out.println(row1 + ", " + col1);
+					System.out.println("Clicked: (" + row1 + ", " + col1 + ")");
+					if(tileList != null) {
+						if(tileList.contains(tileGrid[col1][row1])) {
+							Tile p = tileList.get(tileList.indexOf(tileGrid[col1][row1]) - 1);
+							Tile n = tileList.get(tileList.indexOf(tileGrid[col1][row1]) + 1);
+							System.out.println("Prev: " + p.getCoordinate());
+							System.out.println("Next: " + n.getCoordinate());
+						}
+					}
+					System.out.println(tileGrid[col1][row1].toString());
 				});
 			}
 		}
-		tileGen.setTiles(tiles);
+		tileGen.setTiles(tileGrid);
 		tileGen.generateStartEnd();
-		tileGen.generateWaypoints(4);
+		tileGen.generateWaypoints(wPoints);
 		
 	}
 
 
 	private void initializeNodes() {
-//		tileList = new TileList();
-//		random = new Random();
-		
 		tileGen = new TileGenerator();
 		
 		remap = new Button("Remap");
+		remap.setPrefSize(60, 25);
 		space = new Label(" ");
 		
 		grid = new GridPane();
 		grid.setPadding(new Insets(5));
-		grid.setHgap(-2.0);
-		grid.setVgap(-2.0);
+		grid.setHgap(-1.0);
+		grid.setVgap(-1.0);
 		grid.setAlignment(Pos.CENTER);
 		
-		tiles = new Tile[size][size];
+		tileGrid = new Tile[size][size];
 		
 		Scene scene = new Scene(grid, (size * 50), (size * 50) + 40);
 		Stage stage = new Stage();
