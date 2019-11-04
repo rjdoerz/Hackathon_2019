@@ -87,30 +87,29 @@ public class PlayWindow {
 	}
 
 	private void drawTiles() {
-		// THESE ARE BACKWARDS. FIX???
 //		for (int column = 0; column < size; column++) {
 		for (int row = 0; row < size; row++) {
 //			for (int row = 0; row < size; row++) {
 			for (int column = 0; column < size; column++) {
 				int row1 = row;
 				int col1 = column;
-				tileGrid[column][row] = new Tile(new Coordinate(row, column));
-				Button b = tileGrid[column][row].getButton();
+				tileGrid[row][column] = new Tile(new Coordinate(row, column));
+				Button b = tileGrid[row][column].getButton();
 				b.setPadding(new Insets(-5));
 				b.setMinSize(50, 50);
-				grid.add(b, row, column);
+				grid.add(b, column, row);
 				
 				b.setOnAction(e ->{
 					System.out.println("Clicked: (" + row1 + ", " + col1 + ")");
 					if(tileList != null) {
-						if(tileList.contains(tileGrid[col1][row1])) {
-							Tile p = tileList.get(tileList.indexOf(tileGrid[col1][row1]) - 1);
-							Tile n = tileList.get(tileList.indexOf(tileGrid[col1][row1]) + 1);
+						if(tileList.contains(tileGrid[row1][col1])) {
+							Tile p = tileList.get(tileList.indexOf(tileGrid[row1][col1]) - 1);
+							Tile n = tileList.get(tileList.indexOf(tileGrid[row1][col1]) + 1);
 							System.out.println("Prev: " + p.getCoordinate());
 							System.out.println("Next: " + n.getCoordinate());
 						}
 					}
-					System.out.println(tileGrid[col1][row1].toString());
+					System.out.println(tileGrid[row1][col1].toString());
 				});
 			}
 		}

@@ -39,11 +39,11 @@ public class Tile {
 		 * WHY DO COLUMNS NEED TO BE ROWS ?!!?
 		 * IDK WHY BUT IT WORKS DONT @ ME BRO
 		 */
-		int pCol = this.getCoordinate().getRow() - prev.getCoordinate().getRow();
-		int pRow = this.getCoordinate().getColumn() - prev.getCoordinate().getColumn();
+		int pRow = this.getCoordinate().getRow() - prev.getCoordinate().getRow();
+		int pCol = this.getCoordinate().getColumn() - prev.getCoordinate().getColumn();
 		
-		int nCol = this.getCoordinate().getRow() - next.getCoordinate().getRow();
-		int nRow = this.getCoordinate().getColumn() - next.getCoordinate().getColumn();
+		int nRow = this.getCoordinate().getRow() - next.getCoordinate().getRow();
+		int nCol = this.getCoordinate().getColumn() - next.getCoordinate().getColumn();
 		
 		// PREVIOUS CHECKER
 		if(pRow < 0)
@@ -289,6 +289,9 @@ public class Tile {
 	
 	public boolean isEmpty() {
 		return isEmpty;
+	}
+	public void setEmpty(boolean isEmpty) {
+		this.isEmpty = isEmpty;
 	}
 
 	@Override

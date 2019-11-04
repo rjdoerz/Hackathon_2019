@@ -15,7 +15,7 @@ public abstract class FalseRecursion {
 	 *  Logic: 1 in ODDS chance of opening a false tile. 
 	 *  If ODDS = 3, then there is a 1/3 chance of opening a false tile.
 	 */
-	private final static int ODDS = 2;
+	private final static int ODDS = 3;
 	
 	public static void falsePathing(Tile[][] tileGrid, Tile t) {
 		FalseRecursion.grid = tileGrid;
@@ -28,27 +28,27 @@ public abstract class FalseRecursion {
 		int thisCol = t.getCoordinate().getColumn();
 		Tile next;
 		
-		if(checkUp(t) && random.nextInt(ODDS) == 0) {
+		if(checkUp(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
 			t.setUp(true);
-			next = grid[thisCol][thisRow-1];
+			next = grid[thisRow-1][thisCol];
 			next.setDown(true);
 			falsePathing(next);
 		}
-		if(checkRight(t) && random.nextInt(ODDS) == 0) {
+		if(checkRight(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
 			t.setRight(true);
-			next = grid[thisCol+1][thisRow];
+			next = grid[thisRow][thisCol+1];
 			next.setLeft(true);
 			falsePathing(next);
 		}
-		if(checkDown(t) && random.nextInt(ODDS) == 0) {
+		if(checkDown(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
 			t.setDown(true);
-			next = grid[thisCol][thisRow+1];
+			next = grid[thisRow+1][thisCol];
 			next.setUp(true);
 			falsePathing(next);
 		}
-		if(checkLeft(t) && random.nextInt(ODDS) == 0) {
+		if(checkLeft(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
 			t.setLeft(true);
-			next = grid[thisCol-1][thisRow];
+			next = grid[thisRow][thisCol-1];
 			next.setRight(true);
 			falsePathing(next);
 		}
@@ -61,7 +61,7 @@ public abstract class FalseRecursion {
 		
 		if(thisRow == 0) {
 			return false;
-		} else if(grid[thisCol][thisRow-1].isEmpty()) {
+		} else if(grid[thisRow-1][thisCol].isEmpty()) {
 			return true;
 		} else
 			return false;
@@ -73,7 +73,7 @@ public abstract class FalseRecursion {
 		
 		if(thisRow == grid.length-1) {
 			return false;
-		} else if(grid[thisCol][thisRow+1].isEmpty()) {
+		} else if(grid[thisRow+1][thisCol].isEmpty()) {
 			return true;
 		} else 
 			return false;
@@ -85,7 +85,7 @@ public abstract class FalseRecursion {
 		
 		if(thisCol == 0) {
 			return false;
-		} else if(grid[thisCol-1][thisRow].isEmpty()) {
+		} else if(grid[thisRow][thisCol-1].isEmpty()) {
 			return true;
 		} else 
 			return false;
@@ -97,7 +97,7 @@ public abstract class FalseRecursion {
 		
 		if(thisCol == grid.length-1) {
 			return false;
-		} else if(grid[thisCol+1][thisRow].isEmpty()) {
+		} else if(grid[thisRow][thisCol+1].isEmpty()) {
 			return true;
 		} else 
 			return false;

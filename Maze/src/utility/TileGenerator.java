@@ -57,18 +57,18 @@ public class TileGenerator {
 		endTile.setEnd(true);
 		
 		// Apply Start and End markers to coordinates.
-		tiles[startTile.getCoordinate().getColumn()][startTile.getCoordinate().getRow()].getButton().setStyle("-fx-font-weight: bold;");
-		tiles[startTile.getCoordinate().getColumn()][startTile.getCoordinate().getRow()].getButton().setText("S");
-		tiles[endTile.getCoordinate().getColumn()][endTile.getCoordinate().getRow()].getButton().setText("E");
-		tiles[endTile.getCoordinate().getColumn()][endTile.getCoordinate().getRow()].getButton().setStyle("-fx-font-weight: bold;");
+		tiles[startTile.getCoordinate().getRow()][startTile.getCoordinate().getColumn()].getButton().setStyle("-fx-font-weight: bold;");
+		tiles[startTile.getCoordinate().getRow()][startTile.getCoordinate().getColumn()].getButton().setText("S");
+		tiles[endTile.getCoordinate().getRow()][endTile.getCoordinate().getColumn()].getButton().setText("E");
+		tiles[endTile.getCoordinate().getRow()][endTile.getCoordinate().getColumn()].getButton().setStyle("-fx-font-weight: bold;");
 		return tiles;
 	}
 	
 	
 	public Tile[][] generateWaypoints(int numOfPoints){
-		boolean isRow = checkOrientation(startTile);
+		boolean isHorizontal = checkOrientation(startTile);
 		Tile thisTile = startTile;
-		System.out.println(isRow ? "Horizontal" : "Vertical");
+		System.out.println(isHorizontal ? "Horizontal" : "Vertical");
 		
 		int min = 1;
 		int max;
@@ -82,7 +82,7 @@ public class TileGenerator {
 			int pointA, pointB;
 			
 			// Depending on maze orientation, build waypoints in specified direction.
-			if(isRow) {
+			if(isHorizontal) {
 					pointA = (random.nextInt(max - min + 1)) + min;	
 					pointB = (random.nextInt(tiles.length));
 			} else {
@@ -90,16 +90,16 @@ public class TileGenerator {
 					pointA = (random.nextInt(tiles.length));
 			}
 			
-			if(tiles[pointB][pointA].getButton().getText().matches("[S][E]")) {
+			if(tiles[pointA][pointB].getButton().getText().matches("[S][E]")) {
 				i--;
 				continue;
-			} else if (tiles[pointB][pointA].getCoordinate().compareCoordinate(thisTile.getCoordinate(), 2)) {
+			} else if (tiles[pointA][pointB].getCoordinate().compareCoordinate(thisTile.getCoordinate(), 2)) {
 				i--;
 				continue;
 			}
 			min = max + 1;
 			
-			thisTile = tiles[pointB][pointA];
+			thisTile = tiles[pointA][pointB];
 			thisTile.setWaypoint(true);
 			System.out.print("P" + (i+1) + " ");
 			Printer.print(thisTile);
@@ -116,9 +116,9 @@ public class TileGenerator {
 		int point;
 		point = startTile.getCoordinate().getColumn();
 		if(point == 0)
-			return false; 	// Orientation in columns
+			return false; 	// Orientation in horizontal
 		else
-			return true;	// Orientation in rows
+			return true;	// Orientation in vertical
 	}
 
 
@@ -132,7 +132,7 @@ public class TileGenerator {
 		// Print waypoints to console
 		System.out.println("ST: " + startTile.getCoordinate());
 		for(int i = 0; i < wpTiles.length; i++) {
-			System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate().toString());
+			System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate());
 		}
 		System.out.println("ED: " + endTile.getCoordinate() + "\n");
 		startTile.setWaypoint(true);
@@ -192,6 +192,7 @@ public class TileGenerator {
 				} 
 			}
 			
+			thisTile.setEmpty(false);
 			solution.add(thisTile);
 			
 			// If the button has no text, print the step counter on button
@@ -216,7 +217,7 @@ public class TileGenerator {
 		
 		if(thisColumn < wpColumn) {
 			if(checkRight(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column + ");
 				return nextColumn(thisTile);
 			} 
 			else {
@@ -225,7 +226,7 @@ public class TileGenerator {
 			}
 		} else if (thisColumn > wpColumn) {
 			if(checkLeft(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
 				return lastColumn(thisTile);
 			} 
 			else {
@@ -248,7 +249,7 @@ public class TileGenerator {
 		if(thisRow < wpRow) {
 			// Check the tile below
 			if(checkDown(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Column + ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row + ");
 				return nextRow(thisTile);
 			} 
 			else {
@@ -258,7 +259,7 @@ public class TileGenerator {
 		} else if (thisRow > wpRow) {
 			// Check tile above
 			if(checkUp(thisTile)) {
-				System.out.print(c + ": " + thisTile.getCoordinate() + " Column - ");
+				System.out.print(c + ": " + thisTile.getCoordinate() + " Row - ");
 				return lastRow(thisTile);
 			} 
 			else {
@@ -272,22 +273,22 @@ public class TileGenerator {
 
 	// Probably don't need return types... since objects are passed by reference. But w/e. >.<
 	private Tile nextRow(Tile thisTile) {
-		Tile t = tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() + 1];
+		Tile t = tiles[thisTile.getCoordinate().getRow() + 1][thisTile.getCoordinate().getColumn()];
 		System.out.println(t.getCoordinate());
 		return t;
 	}
 	private Tile lastRow(Tile thisTile) {
-		Tile t = tiles[thisTile.getCoordinate().getColumn()][thisTile.getCoordinate().getRow() - 1];
+		Tile t = tiles[thisTile.getCoordinate().getRow() - 1][thisTile.getCoordinate().getColumn()];
 		System.out.println(t.getCoordinate());
 		return t;
 	}
 	private Tile nextColumn(Tile thisTile) {
-		Tile t = tiles[thisTile.getCoordinate().getColumn() + 1][thisTile.getCoordinate().getRow()];
+		Tile t = tiles[thisTile.getCoordinate().getRow()][thisTile.getCoordinate().getColumn() + 1];
 		System.out.println(t.getCoordinate());
 		return t;
 	}
 	private Tile lastColumn(Tile thisTile) {
-		Tile t = tiles[thisTile.getCoordinate().getColumn() -1][thisTile.getCoordinate().getRow()];
+		Tile t = tiles[thisTile.getCoordinate().getRow()][thisTile.getCoordinate().getColumn() -1];
 		System.out.println(t.getCoordinate());
 		return t;
 	}
@@ -301,10 +302,10 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(column < tiles.length-1) {
-			if(tiles[column + 1][row].isWaypoint())
+			if(tiles[row][column + 1].isWaypoint())
 				return true;
-//			if(tiles[column + 1][row].getButton().getText().isEmpty()) 
-			if(tiles[column + 1][row].isEmpty())
+//			if(tiles[row][column + 1].getButton().getText().isEmpty()) 
+			if(tiles[row][column + 1].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: RIGHT");
@@ -316,10 +317,10 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(column > 0) {
-			if(tiles[column - 1][row].isWaypoint())
+			if(tiles[row][column - 1].isWaypoint())
 				return true;
-//			if(tiles[column - 1][row].getButton().getText().isEmpty())
-			if(tiles[column - 1][row].isEmpty())
+//			if(tiles[row][column - 1].getButton().getText().isEmpty())
+			if(tiles[row][column - 1].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: LEFT");
@@ -331,10 +332,10 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(row > 0) {
-			if(tiles[column][row - 1].isWaypoint())
+			if(tiles[row - 1][column].isWaypoint())
 				return true;
-//			if(tiles[column][row - 1].getButton().getText().isEmpty()) 
-			if(tiles[column][row - 1].isEmpty()) 
+//			if(tiles[row - 1][column].getButton().getText().isEmpty()) 
+			if(tiles[row - 1][column].isEmpty()) 
 				return true;
 		}
 		System.out.println("Check failed: UP");
@@ -346,10 +347,10 @@ public class TileGenerator {
 		int column = tile.getCoordinate().getColumn();
 		
 		if(row < tiles.length-1) {
-			if(tiles[column][row + 1].isWaypoint())
+			if(tiles[row + 1][column].isWaypoint())
 				return true;
-//			if(tiles[column][row + 1].getButton().getText().isEmpty()) 
-			if(tiles[column][row + 1].isEmpty())
+//			if(tiles[row + 1][column].getButton().getText().isEmpty()) 
+			if(tiles[row + 1][column].isEmpty())
 				return true;
 		}
 		System.out.println("Check failed: DOWN");
@@ -366,9 +367,9 @@ public class TileGenerator {
 				Tile t;
 				
 				if(checkOrientation(startTile)) 
-					t = tiles[j][i];
-				else
 					t = tiles[i][j];
+				else
+					t = tiles[j][i];
 				
 				if(t.isWaypoint()) {
 					wpTiles[n++] = t;

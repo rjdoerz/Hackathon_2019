@@ -2,11 +2,15 @@ package workbench;
 
 import java.util.Random;
 
+import model.Coordinate;
+import model.Tile;
+
 public class TwoDArrDemo {
 
 	public static void main(String[] args) {
 //		oneDimArr();
-		twoDimArr();
+//		twoDimArr();
+		loopNest();
 	}
 
 	private static void oneDimArr() {
@@ -87,5 +91,39 @@ public class TwoDArrDemo {
 			}
 			System.out.println();
 		}	
+	}
+	
+	private static void loopNest() {
+		int max = 10;
+		Tile[][] arr = new Tile[max][max];
+		for(int i = 0; i < max; i++) {
+			for(int j = 0; j < max; j++) {
+//				arr[j][i] = c++;
+				arr[i][j] = new Tile(new Coordinate(i, j));
+			}
+		}
+		printer(arr);
+		System.out.println("\n" + arr[3][5].getCoordinate());
+	}
+	
+	private static  void printer(Tile[][] arr) {
+		int x = 0;
+		for(Tile[] a : arr) {
+			System.out.print("Arr " + x++ + ": ");
+			for(Tile n : a) {
+//				System.out.printf("%2d ", n);
+				System.out.print(n.getCoordinate() + " ");
+			}
+			System.out.println();
+		}
+		
+		
+		
+//		for(int i = 0; i < arr.length; i++) {
+//			for(int j = 0; j < arr.length; j++) {
+//				System.out.print(arr[j][i] + " ");
+//			}
+//			System.out.println();
+//		}
 	}
 }
