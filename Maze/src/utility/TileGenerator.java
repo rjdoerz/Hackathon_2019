@@ -130,13 +130,19 @@ public class TileGenerator {
 		Tile[] wpTiles = getWaypoints(numOfPoints);	// List of all waypoints
 			
 		// Print waypoints to console
-		System.out.println("ST: " + startTile.getCoordinate());
+		
 		for(int i = 0; i < wpTiles.length; i++) {
-			System.out.println("WP " + (i+1) + ": " + wpTiles[i].getCoordinate());
+			if(i == 0)
+				System.out.print("ST: ");
+			else if(i == wpTiles.length-1)
+				System.out.print("ED: ");
+			else
+				System.out.print("WP " + (i+2) + ": ");
+			
+			System.out.println(wpTiles[i].getCoordinate());
 		}
-		System.out.println("ED: " + endTile.getCoordinate() + "\n");
-		startTile.setWaypoint(true);
-		endTile.setWaypoint(true);
+		System.out.println();
+		
 		Tile thisTile = startTile;	
 		// Step counter
 		int c = 1;
@@ -359,9 +365,9 @@ public class TileGenerator {
 	}
 
 	private Tile[] getWaypoints(int numOfPoints) {
-		Tile[] wpTiles = new Tile[numOfPoints];
+		Tile[] wpTiles = new Tile[numOfPoints + 2];
 		int n = 0;
-		
+		wpTiles[0] = startTile;
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles.length; j++) {
 				Tile t;
@@ -376,6 +382,7 @@ public class TileGenerator {
 				}
 			}
 		}
+		wpTiles[wpTiles.length-1] = endTile;
 		return wpTiles;
 	}
 	

@@ -96,7 +96,7 @@ public class PlayWindow {
 				tileGrid[row][column] = new Tile(new Coordinate(row, column));
 				Button b = tileGrid[row][column].getButton();
 				b.setPadding(new Insets(-5));
-				b.setMinSize(50, 50);
+				b.setMinSize(30, 30);
 				grid.add(b, column, row);
 				
 				b.setOnAction(e ->{
@@ -135,7 +135,7 @@ public class PlayWindow {
 		
 		tileGrid = new Tile[size][size];
 		
-		Scene scene = new Scene(grid, (size * 50), (size * 50) + 40);
+		Scene scene = new Scene(grid, (size * 30), (size * 30) + 40);
 		Stage stage = new Stage();
 		stage.setScene(scene);
 		stage.show();

@@ -15,7 +15,7 @@ public abstract class FalseRecursion {
 	 *  Logic: 1 in ODDS chance of opening a false tile. 
 	 *  If ODDS = 3, then there is a 1/3 chance of opening a false tile.
 	 */
-	private final static int ODDS = 3;
+	private static int odds = 1;
 	
 	public static void falsePathing(Tile[][] tileGrid, Tile t) {
 		FalseRecursion.grid = tileGrid;
@@ -28,31 +28,38 @@ public abstract class FalseRecursion {
 		int thisCol = t.getCoordinate().getColumn();
 		Tile next;
 		
-		if(checkUp(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
+		if(random.nextBoolean())
+			odds++;
+		
+		if(checkUp(t) && random.nextInt(random.nextInt(odds) + 1) == 0) {
 			t.setUp(true);
 			next = grid[thisRow-1][thisCol];
 			next.setDown(true);
 			falsePathing(next);
+			odds = 1;
 		}
-		if(checkRight(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
+		if(checkRight(t) && random.nextInt(random.nextInt(odds) + 1) == 0) {
 			t.setRight(true);
 			next = grid[thisRow][thisCol+1];
 			next.setLeft(true);
 			falsePathing(next);
+			odds = 1;
 		}
-		if(checkDown(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
+		if(checkDown(t) && random.nextInt(random.nextInt(odds) + 1) == 0) {
 			t.setDown(true);
 			next = grid[thisRow+1][thisCol];
 			next.setUp(true);
 			falsePathing(next);
+			odds = 1;
 		}
-		if(checkLeft(t) && random.nextInt(1+random.nextInt(ODDS)) == 0) {
+		if(checkLeft(t) && random.nextInt(random.nextInt(odds) + 1) == 0) {
 			t.setLeft(true);
 			next = grid[thisRow][thisCol-1];
 			next.setRight(true);
 			falsePathing(next);
+			odds = 1;
 		}
-		
+		t.assignArt();
 	}
 	
 	private static boolean checkUp(Tile t) {

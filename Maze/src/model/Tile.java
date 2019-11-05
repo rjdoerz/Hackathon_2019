@@ -20,6 +20,7 @@ public class Tile {
 		this.button = new Button();
 		this.image = null;
 		setDefault(false);
+		assignArt();
 	}
 
 	protected void setDefault(boolean b) {
@@ -34,11 +35,6 @@ public class Tile {
 	}
 	
 	public void setPathFlags(Tile prev, Tile next) {
-		/*
-		 * WTF IS THIS I DONT EVEN
-		 * WHY DO COLUMNS NEED TO BE ROWS ?!!?
-		 * IDK WHY BUT IT WORKS DONT @ ME BRO
-		 */
 		int pRow = this.getCoordinate().getRow() - prev.getCoordinate().getRow();
 		int pCol = this.getCoordinate().getColumn() - prev.getCoordinate().getColumn();
 		
@@ -69,19 +65,34 @@ public class Tile {
 	}
 	
 	public void assignArt() {
+		assignArt(false);
+	}
+	
+	public void assignArt(boolean isVert) {
 		
 		// START
 		if(isStart) {
-			applyArt(new File(IMG_DIR + "Start.jpg"));
+			if(this.getCoordinate().getColumn() == 0)
+				applyArt(new File(IMG_DIR + "SideStart.jpg"));
+			else
+				applyArt(new File(IMG_DIR + "TopStart.jpg"));
 		}
 		// FINISH
 		else if(isEnd) {
-			applyArt(new File(IMG_DIR + "Finish.jpg"));
+			if(!isVert)
+				applyArt(new File(IMG_DIR + "SideFinish.jpg"));
+			else
+				applyArt(new File(IMG_DIR + "BottomFinish.jpg"));
 		}
 		
 		// ALL-WAY
 		else if(hasUp == true && hasDown == true && hasLeft == true && hasRight == true) {
 			applyArt(new File(IMG_DIR + "AllWay.jpg"));
+		} 
+		
+		// NO-WAY
+		else if(hasUp == false && hasDown == false && hasLeft == false && hasRight == false) {
+			applyArt(new File(IMG_DIR + "Blank.jpg"));
 		} 
 		
 		// CORNER DOWN-LEFT
@@ -196,12 +207,12 @@ public class Tile {
 	public void setUp(boolean hasUp) {
 		this.hasUp = hasUp;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	public void toggleUp() {
 		this.hasUp = !hasUp;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	
 	
@@ -211,12 +222,12 @@ public class Tile {
 	public void setDown(boolean hasDown) {
 		this.hasDown = hasDown;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	public void toggleDown() {
 		this.hasDown = !hasDown;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	
 	
@@ -226,12 +237,12 @@ public class Tile {
 	public void setLeft(boolean hasLeft) {
 		this.hasLeft = hasLeft;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	public void toggleLeft() {
 		this.hasLeft = !hasLeft;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 
 	
@@ -241,12 +252,12 @@ public class Tile {
 	public void setRight(boolean hasRight) {
 		this.hasRight = hasRight;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 	public void toggleRight() {
 		this.hasRight = !hasRight;
 		this.isEmpty = false;
-		assignArt();
+//		assignArt();
 	}
 
 	
@@ -268,10 +279,12 @@ public class Tile {
 	}
 	public void setStart(boolean isStart) {
 		this.isStart = isStart;
+		this.isWaypoint = isStart;
 		this.isEmpty = false;
 	}
 	public void toggleStart() {
 		this.isStart = !isStart;
+		this.isWaypoint = this.isStart;
 		this.isEmpty = false;
 	}
 	
@@ -280,10 +293,12 @@ public class Tile {
 	}
 	public void setEnd(boolean isEnd) {
 		this.isEnd = isEnd;
+		this.isWaypoint = isEnd;
 		this.isEmpty = false;
 	}
 	public void toggleEnd() {
 		this.isEnd = !isEnd;
+		this.isWaypoint = this.isEnd;
 		this.isEmpty = false;
 	}
 	
