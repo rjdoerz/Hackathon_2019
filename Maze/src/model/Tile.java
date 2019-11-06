@@ -3,13 +3,14 @@ package model;
 import java.io.File;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Tile {
 	private Coordinate coordinate;
 	private Button button;
-	private Image image;
+	private ImageView image;
 	private boolean hasUp, hasDown, hasLeft, hasRight, isWaypoint, isStart, isEnd, isEmpty;
 	
 	private final String IMG_DIR = "img/";
@@ -18,6 +19,8 @@ public class Tile {
 		super();
 		this.coordinate = c;
 		this.button = new Button();
+		this.button.setStyle("-fx-focus-color: white;");
+		this.button.setStyle("-fx-faint-focus-color: white;");
 		this.image = null;
 		setDefault(false);
 		assignArt();
@@ -65,10 +68,10 @@ public class Tile {
 	}
 	
 	public void assignArt() {
-		assignArt(false);
+		assignArt(0);
 	}
 	
-	public void assignArt(boolean isVert) {
+	public void assignArt(int n) {
 		
 		// START
 		if(isStart) {
@@ -77,14 +80,15 @@ public class Tile {
 			else
 				applyArt(new File(IMG_DIR + "TopStart.jpg"));
 		}
+		
 		// FINISH
 		else if(isEnd) {
-			if(!isVert)
+			if(n < 0)
 				applyArt(new File(IMG_DIR + "SideFinish.jpg"));
-			else
+			else if(n > 0)
 				applyArt(new File(IMG_DIR + "BottomFinish.jpg"));
 		}
-		
+
 		// ALL-WAY
 		else if(hasUp == true && hasDown == true && hasLeft == true && hasRight == true) {
 			applyArt(new File(IMG_DIR + "AllWay.jpg"));
@@ -164,10 +168,11 @@ public class Tile {
 		else if(hasUp == true && hasDown == false && hasLeft == false && hasRight == false) {
 			applyArt(new File(IMG_DIR + "EndUp.jpg"));
 		}
+		this.button.setStyle("-fx-opacity: 1");
 	}
 	
 	private void applyArt(File file) {
-		ImageView image = new ImageView(new Image(file.toURI().toString()));
+		image = new ImageView(new Image(file.toURI().toString()));
 //		image.setFitWidth(20);
 //		image.setFitHeight(20);
 		image.fitWidthProperty().bind(this.button.minWidthProperty());
@@ -192,12 +197,13 @@ public class Tile {
 		this.button = b;
 	}
 	
-	public Image getImage() {
+	public ImageView getImage() {
 		return image;
 	}
 
-	public void setImage(Image image) {
+	public void setImage(ImageView image) {
 		this.image = image;
+		
 	}
 
 	

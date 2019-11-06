@@ -115,10 +115,13 @@ public class TileGenerator {
 		// This method identifies the orientation of the tiles based on the starting tile.
 		int point;
 		point = startTile.getCoordinate().getColumn();
-		if(point == 0)
+		if(point == 0) {
+			endTile.assignArt(-1);
 			return false; 	// Orientation in horizontal
-		else
+		} else {
+			endTile.assignArt(1);
 			return true;	// Orientation in vertical
+		}
 	}
 
 

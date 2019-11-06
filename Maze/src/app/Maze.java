@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import view.StartupWindow;
 
 public class Maze extends Application {
+	
+	private int defaultSize = 18;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -14,7 +16,7 @@ public class Maze extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		new StartupWindow(primaryStage);
+		new StartupWindow(primaryStage, defaultSize);
 	}
 
 }

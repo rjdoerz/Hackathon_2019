@@ -17,12 +17,15 @@ public class StartupWindow {
 	private Spinner<Integer> sizeSpn;
 	private Button okBtn;
 	private Label sizeLbl;
+	private int defaultSpinnerValue;
 
-	public StartupWindow(Stage stage) {
+	public StartupWindow(Stage stage, int defaultSpinnerValue) {
 		this.stage = stage;
+		this.defaultSpinnerValue = defaultSpinnerValue;
 		initializeNodes();
 		drawPane();
 		callbacks();
+		stage.centerOnScreen();
 		stage.show();
 	}
 
@@ -32,8 +35,8 @@ public class StartupWindow {
 			String str = sizeSpn.getValue().toString();
 			int xyDim = Integer.valueOf(str);
 			stage.close();
-			int difficulty = 3;										// DIFFICULTY SETTING
-			new PlayWindow(xyDim, difficulty);
+			int numOfWaypoints = 3;										// DIFFICULTY SETTING
+			new PlayWindow(xyDim, numOfWaypoints);
 		});
 	}
 
@@ -56,7 +59,7 @@ public class StartupWindow {
 		grid.setVgap(10);
 		grid.setHgap(10);
 		
-		sizeSpn = new Spinner<Integer>(7, 40, 18);
+		sizeSpn = new Spinner<Integer>(7, 40, defaultSpinnerValue);
 		
 		okBtn = new Button("GO!");
 		okBtn.setMinHeight(50);
