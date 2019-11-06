@@ -16,12 +16,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import model.Coordinate;
@@ -38,16 +37,17 @@ public class PlayWindow {
 	private Button remap, setBtn;
 	private Label space;
 	private int size, wPoints, steps;
-//	private Random random;
 	private TileList tileList;
 	private Stage stage;
 	private boolean disableBtns = true;
+	private long start;
 	
-	private int btnSize = 40;
+	private int btnSize;
 	
-	public PlayWindow(int size, int wPoints) {
+	public PlayWindow(int size, int wPoints, int btnSize) {
 		this.size = size;
 		this.wPoints = wPoints;
+		this.btnSize = btnSize;
 		initializeNodes();
 		drawPane();
 		tileList = tileGen.connectWaypoints(wPoints);
@@ -57,7 +57,7 @@ public class PlayWindow {
 		player.getButton().fire();
 		
 		steps = 0;
-		
+		start = System.currentTimeMillis();
 		actionCheck();
 		
 		callbacks();
@@ -87,12 +87,9 @@ public class PlayWindow {
 //			toggleBtnDisable();
 			System.out.println("\n== == ==\n");
 			newTiles();
-			player = tileList.get(2);
-			lastSpace = tileList.get(2);
-			player.getButton().fire();
 		});
 		setBtn.setOnAction(e ->{
-			new StartupWindow(stage, size);
+			new StartupWindow(stage, size, btnSize, StartupWindow.getMaxSize());
 		});
 		
 		//LEFT
@@ -139,10 +136,13 @@ public class PlayWindow {
 	
 	private void moveAction() {
 		if(player.isEnd()) {
+			System.out.println("Player wins");
 			ButtonType regen = new ButtonType("Regenerate", ButtonBar.ButtonData.OK_DONE);
 			ButtonType change = new ButtonType("Quit", ButtonBar.ButtonData.CANCEL_CLOSE);
-			String winner = String.format("CONGRATULATION!!!  A WINNER IS YOU!!!\n\nMove Count: %d", steps);
+			long time = (System.currentTimeMillis() - start) / 1000;
+			String winner = String.format("CONGRATULATION!!!  A WINNER IS YOU!!!\n\nMove Count: %d\nTime: %d Seconds", steps, time);
 			Alert alert = new Alert(AlertType.CONFIRMATION, winner, regen, change);
+			alert.setTitle("Winner!");
 			alert.setHeaderText(null);
 			alert.setGraphic(buttonArt(new File("img/trophy.png"), player.getButton()));
 			Optional<ButtonType> result = alert.showAndWait();
@@ -172,6 +172,11 @@ public class PlayWindow {
 		drawPane();
 		tileList = tileGen.connectWaypoints(wPoints);
 		setTileFlags();
+		player = tileList.get(2);
+		lastSpace = tileList.get(2);
+		player.getButton().fire();
+		actionCheck(); 
+		start = System.currentTimeMillis();
 	}
 
 
@@ -204,17 +209,16 @@ public class PlayWindow {
 
 	private void drawPane() {
 		drawTiles();
-		
 		grid.add(space, size/2, size + 1);
-		grid.add(remap, 0, size + 2);
+		grid.add(remap, 0, size + 2, 2, 2);
 		GridPane.setHalignment(remap, HPos.CENTER);
-		grid.add(setBtn, size - 1, size + 2);
+		grid.add(setBtn, size - 2, size + 2, 2, 2);
 		GridPane.setHalignment(setBtn, HPos.CENTER);
 		
-		grid.add(leftBtn, 0, 0);
-		grid.add(upBtn, 1, 0);
-		grid.add(downBtn, 2, 0);
-		grid.add(rightBtn, 3, 0);
+		grid.add(leftBtn, 0, 0, 2, 2);
+		grid.add(upBtn, 1, 0, 2, 2);
+		grid.add(downBtn, 2, 0, 2, 2);
+		grid.add(rightBtn, 3, 0, 2, 2);
 		
 	}
 
@@ -284,6 +288,7 @@ public class PlayWindow {
 		downBtn.setVisible(false);
 		
 		remap = new Button();
+		remap.setTooltip(new Tooltip("Regenerate Maze"));
 		remap.setMaxSize(30, 30);
 		remap.setMinSize(30, 30);
 		remap.setGraphic(buttonArt(new File("img/editIcon.png"), remap));
@@ -292,6 +297,7 @@ public class PlayWindow {
 //		remap.setStyle("-fx-faint-focus-color: white;");
 		
 		setBtn = new Button();
+		setBtn.setTooltip(new Tooltip("Return to setup"));
 		setBtn.setMaxSize(30, 30);
 		setBtn.setMinSize(30, 30);
 		setBtn.setGraphic(buttonArt(new File("img/gear.png"), setBtn));

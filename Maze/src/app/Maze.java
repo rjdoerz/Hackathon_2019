@@ -9,6 +9,8 @@ import view.StartupWindow;
 public class Maze extends Application {
 	
 	private int defaultSize = 18;
+	private int maxSize = 30;
+	private int defaultTileSize = 35;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -16,7 +18,7 @@ public class Maze extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		new StartupWindow(primaryStage, defaultSize);
+		new StartupWindow(primaryStage, defaultSize, defaultTileSize, maxSize);
 	}
 
 }

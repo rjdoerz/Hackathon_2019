@@ -7,8 +7,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import model.Tile;
 
 public class StartupWindow {
 	
@@ -18,25 +21,36 @@ public class StartupWindow {
 	private Button okBtn;
 	private Label sizeLbl;
 	private int defaultSpinnerValue;
+	private static int maxSpinnerValue;
+	
+	private int numOfWaypoints;
 
-	public StartupWindow(Stage stage, int defaultSpinnerValue) {
+	public StartupWindow(Stage stage, int defaultSpinnerValue, int btnSize, int maxSpinnerSize) {
 		this.stage = stage;
 		this.defaultSpinnerValue = defaultSpinnerValue;
+		StartupWindow.maxSpinnerValue = maxSpinnerSize;
 		initializeNodes();
 		drawPane();
-		callbacks();
+		callbacks(btnSize);
 		stage.centerOnScreen();
 		stage.show();
 	}
-
+	
+	public static int getMaxSize() {
+		return maxSpinnerValue;
+	}
+	
 	// TAKE VALUE AND USE TO MAKE BUTTON GRID
-	private void callbacks() {
+	private void callbacks(int btnSize) {
 		okBtn.setOnAction(e -> {
 			String str = sizeSpn.getValue().toString();
 			int xyDim = Integer.valueOf(str);
+			numOfWaypoints = (int) (xyDim * 0.2);
 			stage.close();
-			int numOfWaypoints = 3;										// DIFFICULTY SETTING
-			new PlayWindow(xyDim, numOfWaypoints);
+			new PlayWindow(xyDim, numOfWaypoints, btnSize);
+		});
+		okBtn.getScene().getAccelerators().put(new KeyCodeCombination(KeyCode.ENTER), () ->{
+			okBtn.fire();
 		});
 	}
 
@@ -59,7 +73,7 @@ public class StartupWindow {
 		grid.setVgap(10);
 		grid.setHgap(10);
 		
-		sizeSpn = new Spinner<Integer>(7, 40, defaultSpinnerValue);
+		sizeSpn = new Spinner<Integer>(7, maxSpinnerValue, defaultSpinnerValue);
 		
 		okBtn = new Button("GO!");
 		okBtn.setMinHeight(50);
