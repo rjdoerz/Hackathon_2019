@@ -11,7 +11,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import model.Tile;
 
 public class StartupWindow {
 	

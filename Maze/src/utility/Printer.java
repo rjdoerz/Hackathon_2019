@@ -15,6 +15,7 @@ public abstract class Printer {
 		System.out.println(tile.getCoordinate());
 	}
 	
+	@SafeVarargs
 	public static <T> void print(T ...items) {
 		for(T item : items) {
 			if(item instanceof Tile) {

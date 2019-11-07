@@ -1,8 +1,6 @@
 package app;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import view.StartupWindow;
 

@@ -3,7 +3,6 @@ package controller;
 import java.util.Random;
 
 import model.Tile;
-import model.TileList;
 
 public abstract class FalseRecursion {
 	private static Tile[][] grid;
